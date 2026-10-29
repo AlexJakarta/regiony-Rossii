@@ -146,6 +146,7 @@ h3{font-size:12px;font-weight:900;margin:16px 0 8px;color:var(--soft);text-trans
 .qbar{height:8px;border-radius:8px;background:var(--chip);margin:10px 0 6px;overflow:hidden}.qbar i{display:block;height:100%;background:#7A5AF8;border-radius:8px}.qrank>small{font-size:13px;font-weight:700;color:var(--soft)}
 .qladder{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}.qladder li{background:var(--panel);border-radius:12px;padding:8px 12px;display:flex;justify-content:space-between;gap:8px;align-items:center}.qladder li small{color:var(--soft);font-weight:700;font-size:12.5px;white-space:nowrap}.qladder li.got{opacity:.6}.qladder li.on{outline:2px solid #7A5AF8}
 .rulehint{text-align:center;font-size:13px;font-weight:800;color:var(--soft);margin:8px 0 2px}.rulelist{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}.rulelist li{line-height:1.4}
+.capph{margin:10px 0 0}.capph img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;display:block;cursor:zoom-in}.capph figcaption{margin-top:4px}.capph figcaption small{font-size:11px;color:var(--soft)}
 .hook{font-size:19px;font-weight:900;line-height:1.25;margin:-2px 0 14px;letter-spacing:-.01em;text-wrap:balance}
 .hero{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px;border-radius:16px;background:var(--sheet);border:1px solid color-mix(in srgb,var(--c) 25%,transparent)}
 .hav{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#000))}
@@ -2287,7 +2288,7 @@ function openRegion(id,zoom=true){
   const tmin=-40,tmax=30,pos=t=>((t-tmin)/(tmax-tmin)*100).toFixed(1)+'%';
   let h=`<div class="grid">
    <div class="f"><b>Население</b><div class="v">${people(r.pop)}</div><small>${r.popRank}-е место из ${R.length}</small></div>
-   <div class="f"><b>${isCity?'Город':'Столица'}</b><div class="v sm">${esc(r.cap)}</div><small>${isCity?'сам себе столица':capPeople(r.capPop)+' жителей'}</small></div>
+   <div class="f wide capf"><b>${isCity?'Город':'Столица'}</b><div class="v sm">${esc(r.cap)}</div><small>${isCity?'сам себе столица':capPeople(r.capPop)+' жителей'}</small>${(typeof CAP_IMG!=='undefined'&&CAP_IMG[id])?`<figure class="capph"><img alt="${esc(r.cap)}" src="${CAP_IMG[id].src}" loading="lazy"><figcaption>${credit(CAP_IMG[id].cr)}</figcaption></figure>`:''}</div>
    <div class="f wide"><b>Площадь</b><div class="v">${nf.format(r.area)} км² <span style="font-size:14px;color:var(--soft);font-weight:800">· ${pct(r.area)} России</span></div>
      <div class="meter"><span style="width:${Math.max(0.6,r.area/byId.SA.area*100)}%"></span></div><small>${r.areaRank}-е место по размеру · ${compare(r.area)}</small></div>
    <div class="f"><b>Плотность</b><div class="v">${dens(r.dens)}</div><small>человек на 1 км²<br>${densCmp(r.dens)} (${dens(RU_DENS)})</small></div>
@@ -2300,7 +2301,7 @@ function openRegion(id,zoom=true){
     <div class="ticks"><span>−40°</span><span>0°</span><span>+30°</span></div></div>
     <small>Разница между зимой и летом — ${r.tjul-r.tj}°</small></div>`;
   if(who!=='quiz')h+=homeBlock(r);
-  {const ci=typeof CAP_IMG!=='undefined'&&CAP_IMG[id];if(ci||r.sights.length)h+=`<h3>Что посмотреть</h3><div class="sights">${ci?`<figure class="sight ph" data-t="city" data-seed="1" data-cold=""><img alt="${esc(r.cap)}" src="${ci.src}" loading="lazy"><figcaption>${E?'Capital':'Столица'}: ${esc(r.cap)}${credit(ci.cr)}</figcaption></figure>`:''}${r.sights.map((s,i)=>{const im=SIGHT_IMG[id+'_'+i];let seed=0;for(const c of id+i)seed=(seed*31+c.charCodeAt(0))%9973;
+  {if(r.sights.length)h+=`<h3>Что посмотреть</h3><div class="sights">${r.sights.map((s,i)=>{const im=SIGHT_IMG[id+'_'+i];let seed=0;for(const c of id+i)seed=(seed*31+c.charCodeAt(0))%9973;
     return`<figure class="sight${im?' ph':''}" data-t="${s[1]}" data-seed="${seed}" data-cold="${r.tj<=-18?1:''}">${im?`<img alt="${esc(s[0])}" src="${im.src}" loading="lazy">`:sceneSVG(s[1],{id,seed,cold:r.tj<=-18})}<figcaption>${esc(s[0])}${im?credit(im.cr):''}</figcaption></figure>`}).join('')}</div>`;}
   if(r.hist&&r.hist.length){const z=r.hero;h+=`<h3>История региона</h3>${r.hook?`<div class="hook">${esc(r.hook)}</div>`:''}<ol class="hist">${r.hist.map(x=>`<li><b>${esc(x[0])}</b><span>${esc(x[1])}</span></li>`).join('')}</ol>${z?`<div class="hero"><div class="hav">${esc(z[0].split(' ').filter(w=>/^[А-ЯЁA-Z]/.test(w)).slice(0,2).map(w=>w[0]).join(''))}</div><div class="hbody"><small>Герой региона</small><b>${esc(z[0])}</b><span>${esc(z[1])}</span>${z[2]?`<em>💵 ${esc(z[2])}</em>`:''}</div></div>`:''}`}
   h+=`<h3>Язык и вера</h3>`;
@@ -2319,7 +2320,7 @@ function openRegion(id,zoom=true){
   h=secify(h);
   h+=`<button class="donebtn ${done?'is':''}" id="cdone"${who==='quiz'?' style="display:none"':''} aria-pressed="${done}"></button><div class="cnav"><button class="pill" id="czoom">Показать на карте</button></div>`;
   if(id!==HOME&&who==='guest')h+=`<button class="pill homebtn" id="chome">🏠 Сделать моим домом</button>`;
-  $('#cbody').innerHTML=h;$('#cbody').scrollTop=0;$('#cbody').querySelectorAll('.sight.ph img').forEach(im=>{im.onclick=()=>lightbox(im.src,im.parentNode.querySelector('figcaption').innerHTML);im.onerror=()=>{const f=im.parentNode;f.classList.remove('ph');const sm=f.querySelector('figcaption small');sm&&sm.remove();im.outerHTML=sceneSVG(f.dataset.t,{id,seed:+f.dataset.seed,cold:!!f.dataset.cold})}});
+  $('#cbody').innerHTML=h;$('#cbody').scrollTop=0;$('#cbody').querySelectorAll('.capph img').forEach(im=>{im.onclick=()=>lightbox(im.src,esc(r.cap)+' '+im.parentNode.querySelector('figcaption').innerHTML)});$('#cbody').querySelectorAll('.sight.ph img').forEach(im=>{im.onclick=()=>lightbox(im.src,im.parentNode.querySelector('figcaption').innerHTML);im.onerror=()=>{const f=im.parentNode;f.classList.remove('ph');const sm=f.querySelector('figcaption small');sm&&sm.remove();im.outerHTML=sceneSVG(f.dataset.t,{id,seed:+f.dataset.seed,cold:!!f.dataset.cold})}});
   $('#card').classList.add('on');$('#scrim').classList.toggle('on',isMobile());
   $('#cclose').onclick=closeCard;{const hb=$('#chome');if(hb)hb.onclick=()=>{store.set('ruHome_guest',id);toast('Теперь твой дом — '+r.n+'. Всё сравнивается с ним.',1800);setTimeout(()=>location.reload(),900)}}$('#czoom').onclick=()=>{if(isMobile())closeCard();focusRegion(id)};
   const db=$('#cdone');const setBtn=d=>{db.classList.toggle('is',d);db.setAttribute('aria-pressed',d);db.innerHTML=d?'<span>✓ Изучено — экзамен сдан</span><small>нажми, чтобы снять отметку</small>':'<span>Я изучил этот регион</span><small>поставь отметку, когда всё прочитаешь</small>'};setBtn(done);
