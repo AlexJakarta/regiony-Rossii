@@ -2107,7 +2107,7 @@ const mix=(a,b,t)=>`color-mix(in oklab, ${b} ${Math.round(t*100)}%, ${a})`;
 const lg=(x,a,b)=>Math.max(0,Math.min(1,(Math.log(x)-Math.log(a))/(Math.log(b)-Math.log(a))));
 const tzHue=t=>(t+1)*32+190;
 const MODES={
- seen:{name:'Изученные',fill:r=>visited.has(r.id)?'var(--good)':'var(--land)',legend:()=>who==='quiz'?`<b>${E?'Quiz mode':'Режим квиза'}</b><div class="hint">${E?'Tap any region to read about it. Press “Play” for the quiz.':'Нажми на любой регион, чтобы почитать о нём. Квиз — кнопка «Играть».'}</div>`:`<b>Изучено ${visited.size} из ${R.length}</b><div class="cats"><span><i style="background:var(--good)"></i>изучено</span><span><i style="background:var(--land);box-shadow:inset 0 0 0 1px var(--soft)"></i>ещё не изучено</span></div><div class="hint">Выбери на карте серый регион, прочитай карточку и сдай экзамен</div>`},
+ seen:{name:'Изученные',fill:r=>visited.has(r.id)?'var(--good)':'var(--land)',legend:()=>(who==='quiz'||who==='alex')?`<b>${E?'Quiz mode':'Режим квиза'}</b><div class="hint">${E?'Tap any region to read about it. Press “Play” for the quiz.':'Нажми на любой регион, чтобы почитать о нём. Квиз — кнопка «Играть».'}</div>`:`<b>Изучено ${visited.size} из ${R.length}</b><div class="cats"><span><i style="background:var(--good)"></i>изучено</span><span><i style="background:var(--land);box-shadow:inset 0 0 0 1px var(--soft)"></i>ещё не изучено</span></div><div class="hint">Выбери на карте серый регион, прочитай карточку и сдай экзамен</div>`},
  fd:{name:'Округа',fill:r=>`var(--fd${FD[r.fd][1]})`,legend:()=>`<b>Федеральные округа</b><div class="cats">${Object.entries(FD).map(([k,v])=>`<span><i style="background:var(--fd${v[1]})"></i>${v[0]}</span>`).join('')}</div>`},
  pop:{name:'Сколько людей',fill:r=>mix('var(--lo)','var(--hi)',lg(r.pop,40000,13300000)),legend:()=>`<b>Сколько людей живёт</b><div class="ramp" style="background:linear-gradient(90deg,var(--lo),var(--hi))"></div><div class="ends"><span>40 тыс.</span><span>1 млн</span><span>13 млн</span></div>`},
  dens:{name:'Плотность',fill:r=>mix('var(--lo)','var(--hi)',lg(r.dens,0.05,5200)),legend:()=>`<b>Людей на 1 км²</b><div class="ramp" style="background:linear-gradient(90deg,var(--lo),var(--hi))"></div><div class="ends"><span>0,05</span><span>15</span><span>5000</span></div><div class="hint">Чем темнее, тем теснее</div>`},
@@ -2129,7 +2129,7 @@ function setMode(k){const was=mode;mode=k;store.set('ruRegionsMode2',k);if((k===
 
 // ---------- progress
 function drawChecks(){const g=$('#checks');if(!g)return;const k=Math.min(1.2,(vb.w/Math.max(1,rect().width))*1.15);g.innerHTML=[...visited].map(id=>{const c=GEO.r[id].c;return`<g transform="translate(${c[0]},${c[1]+(labels[id]&&labels[id].el.style.display!=='none'?10*k:0)}) scale(${k})"><circle r="5.5"/><path d="M-2.6 0.2 -0.7 2.1 2.8-1.9"/></g>`}).join('')}
-function prog(){drawChecks();if(who==='quiz'){$('#progT').innerHTML='<b>'+(E?'Quiz':'Квиз')+'</b><span class="sep"> · </span><span class="rkn" style="color:#7A5AF8">'+qrn(qrank(store.get('ruQuizCards',0)))+'</span>';$('#progB').style.width='0%';return}const nm={vika:'Вика',dima:'Дима',alex:'AlexJakarta',guest:'Гость'}[who]||'';let rk='';try{const st=ST[who];const ri=rankOf(st.correct);const RC=['#8A94A6','#2F9E6B','#2D8FD6','#7A5AF8','#D9467A','#E07A1F','#B8920F','#1FA9A0','#5B6CF0','#C2502F','#C9A227'];rk='<span class="sep"> · </span><span class="rkn" style="color:'+RC[ri+1]+'">'+(ri>=0?RANKS[ri].n:'Новичок')+'</span><span class="pts"> · '+st.correct+' б.</span>'}catch(e){}
+function prog(){drawChecks();if((who==='quiz'||who==='alex')){$('#progT').innerHTML='<b>'+(who==='alex'?'AlexJakarta':(E?'Quiz':'Квиз'))+'</b><span class="sep"> · </span><span class="rkn" style="color:#7A5AF8">'+qrn(qrank(store.get(QK('ruQuizCards'),0)))+'</span>';$('#progB').style.width='0%';return}const nm={vika:'Вика',dima:'Дима',alex:'AlexJakarta',guest:'Гость'}[who]||'';let rk='';try{const st=ST[who];const ri=rankOf(st.correct);const RC=['#8A94A6','#2F9E6B','#2D8FD6','#7A5AF8','#D9467A','#E07A1F','#B8920F','#1FA9A0','#5B6CF0','#C2502F','#C9A227'];rk='<span class="sep"> · </span><span class="rkn" style="color:'+RC[ri+1]+'">'+(ri>=0?RANKS[ri].n:'Новичок')+'</span><span class="pts"> · '+st.correct+' б.</span>'}catch(e){}
   $('#progT').innerHTML='<b>'+nm+'</b>'+rk+'<span class="w"> · изучено '+visited.size+'/'+R.length+'</span>';$('#progB').style.width=(visited.size/R.length*100)+'%'}
 $('#prog').onclick=()=>rating();
 
@@ -2318,7 +2318,7 @@ function openRegion(id,zoom=true){
   if(V.w&&!E)h+=`<h3>Как тут говорят</h3><div class="say">${esc(V.w)}</div>`;
   h+=`<h3>Интересные факты</h3><ol class="facts">${r.facts.map((f,i)=>`<li data-n="${i+1}">${esc(f)}</li>`).join('')}</ol>`;
   h=secify(h);
-  h+=`<button class="donebtn ${done?'is':''}" id="cdone"${who==='quiz'?' style="display:none"':''} aria-pressed="${done}"></button><div class="cnav"><button class="pill" id="czoom">Показать на карте</button></div>`;
+  h+=`<button class="donebtn ${done?'is':''}" id="cdone"${(who==='quiz'||who==='alex')?' style="display:none"':''} aria-pressed="${done}"></button><div class="cnav"><button class="pill" id="czoom">Показать на карте</button></div>`;
   if(id!==HOME&&who==='guest')h+=`<button class="pill homebtn" id="chome">🏠 Сделать моим домом</button>`;
   $('#cbody').innerHTML=h;$('#cbody').scrollTop=0;$('#cbody').querySelectorAll('.capph img').forEach(im=>{im.onclick=()=>lightbox(im.src,esc(r.cap)+' '+im.parentNode.querySelector('figcaption').innerHTML)});$('#cbody').querySelectorAll('.sight.ph img').forEach(im=>{im.onclick=()=>lightbox(im.src,im.parentNode.querySelector('figcaption').innerHTML);im.onerror=()=>{const f=im.parentNode;f.classList.remove('ph');const sm=f.querySelector('figcaption small');sm&&sm.remove();im.outerHTML=sceneSVG(f.dataset.t,{id,seed:+f.dataset.seed,cold:!!f.dataset.cold})}});
   $('#card').classList.add('on');$('#scrim').classList.toggle('on',isMobile());
@@ -2542,7 +2542,7 @@ const QT={
    const PG={kremlin:'k',temple:'k',mosque:'k',pagoda:'k',tower:'k',monument:'m',mountain:'n',volcano:'n',rocks:'n',cave:'n',dune:'n',forest:'n',snow:'n',lake:'w',river:'w',sea:'w',waterfall:'w',geyser:'w',house:'h',palace:'h',city:'h',bridge:'t',ship:'t',icebreaker:'t',space:'t',lighthouse:'t'};
    const all=R.flatMap(x=>x.sights.map(z=>({n:z[0],t:z[1],r:x}))).filter(z=>z.r!==r&&z.n!==s[0]);const same=shuffle(all.filter(z=>z.t===s[1])),grp=shuffle(all.filter(z=>z.t!==s[1]&&PG[z.t]===PG[s[1]]));
    const os=[...same,...grp].slice(0,3);if(os.length<3)return null;const pre=new Image();pre.src=im.src;
-   return{q:'Что на фото?',vis:`<div class="gphoto"><img alt="" src="${im.src}">${im.cr&&im.cr.a?`<small>Фото: ${esc(im.cr.a)} · ${esc(im.cr.l||'')}</small>`:''}</div>`,opts:[{t:s[0],ok:true},...os.map(z=>({t:z.n,ok:false}))],about:r.id,ex:`${s[0]} — ${r.n}`}},
+   return{q:'Что на фото?',vis:`<div class="gphoto"><img alt="" src="${im.src}"></div>`,opts:[{t:s[0],ok:true},...os.map(z=>({t:z.n,ok:false}))],about:r.id,ex:`${s[0]} — ${r.n}${im.cr&&im.cr.a?' (фото: '+im.cr.a+')':''}`}},
  flag(){const r=weighted(R);if(!r)return null;return{q:'Чей это флаг?',vis:`<div class="gflag sm"><img alt="Флаг" src="${flag(r.id)}"></div>`,opts:[r,...others(r,3)].map(x=>({t:x.n,ok:x===r})),about:r.id,ex:'Это флаг: '+r.n}},
  map(){const r=weighted(R);if(!r)return null;return{q:'Какой регион выделен на карте?',vis:miniMap(r.id),opts:[r,...others(r,3)].map(x=>({t:x.n,ok:x===r})),about:r.id,ex:'Это '+r.n}},
  cap(){const pool=R.filter(x=>x.cap!==x.n);const r=weighted(pool);if(!r)return null;return{q:`Какой город — столица региона «${r.n}»?`,opts:[r,...others(r,3,x=>x.cap!==x.n)].map(x=>({t:x.cap,ok:x===r})),about:r.id,ex:`Столица — ${r.cap}`}},
@@ -2579,7 +2579,7 @@ function hubData(){const s=ST[who];if(s.day!==today()){s.day=today();s.dayCount=
   return{s,ri,nx,seals,rankPay,earned:rankPay+seals*SEAL_PAY,streak,left,P:PLAYERS.find(p=>p.id===who)}}
 const whoBar=()=>`<div class="who" role="group" aria-label="Кто играет">${PLAYERS.map(p=>`<button data-p="${p.id}" aria-pressed="${p.id===who}">${p.s||p.n}</button>`).join('')}</div>`;
 {let has=false;try{has=localStorage.getItem('ruQuizWho')!==null}catch(e){}
- if(!has){const d=document.createElement('div');d.id='whoPick';d.innerHTML=`<div class="box"><b>Кто играет?</b><span>Прогресс сохраняется в этом браузере — у каждого свой</span><div class="btns">${PLAYERS.map(p=>`<button data-p="${p.id}">${p.n}</button>`).join('')}</div></div>`;document.body.appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{const p=b.dataset.p;if(p==='guest'&&store.get('ruHome_guest',null)===null){d.remove();askHome(()=>{store.set('ruQuizWho','guest');location.reload()})}else{setWho(p);d.remove();if(p==='quiz')quizHub()}})}}
+ if(!has){const d=document.createElement('div');d.id='whoPick';d.innerHTML=`<div class="box"><b>Кто играет?</b><span>Прогресс сохраняется в этом браузере — у каждого свой</span><div class="btns">${PLAYERS.map(p=>`<button data-p="${p.id}">${p.n}</button>`).join('')}</div></div>`;document.body.appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{const p=b.dataset.p;if(p==='guest'&&store.get('ruHome_guest',null)===null){d.remove();askHome(()=>{store.set('ruQuizWho','guest');location.reload()})}else{setWho(p);d.remove();if(p==='quiz'||p==='alex')quizHub()}})}}
 function askHome(done){const d=document.createElement('div');d.id='whoPick';const opts=[...R].sort((a,b)=>a.n.localeCompare(b.n,'ru')).map(r=>`<option value="${r.id}">${esc(r.n)}</option>`).join('');
  d.innerHTML=`<div class="box"><b>Где твой дом?</b><span>Выбери свой регион — с ним будут сравниваться все остальные</span><select id="homeSel" class="homesel">${opts}</select><div class="btns"><button id="homeOk">Готово</button></div></div>`;document.body.appendChild(d);
  d.querySelector('#homeSel').value='SVE';d.querySelector('#homeOk').onclick=()=>{store.set('ruHome_guest',d.querySelector('#homeSel').value);d.remove();done()}}
@@ -2614,7 +2614,7 @@ function records(){hubOpen=false;G.hidden=false;closeCard();game=null;
   $('#gx').onclick=endGame;G.querySelectorAll('.recs button').forEach(b=>b.onclick=()=>{endGame();openRegion(b.dataset.id,true)});G.scrollTop=0}
 
 // --- экран «Играть»
-function hub(){if(who==='quiz')return quizHub();hubOpen=true;G.hidden=false;closeCard();game=null;const d=hubData(),s=d.s;const need=needToday(),locked=visited.size<MIN_STUDY,full=s.dayCount>=DAILY;
+function hub(){if((who==='quiz'||who==='alex'))return quizHub();hubOpen=true;G.hidden=false;closeCard();game=null;const d=hubData(),s=d.s;const need=needToday(),locked=visited.size<MIN_STUDY,full=s.dayCount>=DAILY;
   G.innerHTML=`<div class="top"><b>Играть</b><button class="pill" id="gx" style="margin-left:auto">К карте</button></div>
   ${whoBar()}
   <button class="minirank" id="torating"><span class="lvl">${d.ri+1}</span><span class="pc"><b>${d.ri>=0?RANKS[d.ri].n:'Новичок'}</b><small>${ballov(s.correct)} · ${visited.size}/${R.length} регионов${who==='guest'?'':' · заработано '+rub(d.earned)}</small></span><span class="go">Мой рейтинг ›</span></button>
@@ -2627,7 +2627,7 @@ function hub(){if(who==='quiz')return quizHub();hubOpen=true;G.hidden=false;clos
   $('#gx').onclick=endGame;bindWho(hub);$('#torating').onclick=rating;
   if($('#go'))$('#go').onclick=startRound;if($('#tostudy'))$('#tostudy').onclick=endGame;G.scrollTop=0}
 // --- экран «Мой рейтинг»
-function rating(){if(who==='quiz')return quizHub();hubOpen=true;G.hidden=false;closeCard();game=null;const d=hubData(),s=d.s,now=new Date(),guest=who==='guest';
+function rating(){if((who==='quiz'||who==='alex'))return quizHub();hubOpen=true;G.hidden=false;closeCard();game=null;const d=hubData(),s=d.s,now=new Date(),guest=who==='guest';
   const wk=last7(s),wmax=Math.max(1,...wk.map(x=>x[1]));let cum=0;
   const rows=RANKS.map((r,i)=>{cum+=r.pay;const got=i<=d.ri,next=i===d.ri+1;
     const pp=Math.min(1,s.correct/r.at),pr=Math.min(1,visited.size/r.reg);
@@ -2702,6 +2702,7 @@ function endRound(){setTimeout(()=>{try{prog()}catch(e){}},0);const g=game,s=ST[
 
 // ---------- КВИЗ для взрослых (профиль «Гость — квиз»): без карточек и ограничений
 const QZN=5,QZS=20;
+const QK=k=>who==='quiz'?k:k+'_'+who;
 const QRANKS=[[0,'Турист','Tourist'],[10,'Путешественник','Traveller'],[25,'Знаток','Connoisseur'],[50,'Краевед','Local Expert'],[100,'Эрудит','Erudite'],[175,'Профессор географии','Professor of Geography'],[250,'Академик','Academician'],[350,'Живая энциклопедия','Walking Encyclopedia'],[500,'Бог географии','God of Geography']];
 const qrank=n=>{let k=0;QRANKS.forEach((r,i)=>{if(n>=r[0])k=i});return k};const qrn=k=>QRANKS[k][E?2:1];
 function qrankBox(n){const k=qrank(n),nx=QRANKS[k+1];const pc=nx?Math.round((n-QRANKS[k][0])/(nx[0]-QRANKS[k][0])*100):100;
@@ -2722,7 +2723,7 @@ const QZ={
    return{q:E?`Which region is the city of ${c} in?`:`В каком регионе город ${c}?`,fixed:1,opts:nearOpts(r).map(x=>({t:x.n,ok:x===r})),about:r.id,ex:`${c} — ${r.n}`}}return null},
  year(){for(let k=0;k<60;k++){const r=qpick(R),hs=(r.hist||[]).filter(h=>/^\d{3,4}$/.test(h[0]));if(!hs.length)continue;const h=qpick(hs),t=qmask(h[1],r);if(t.split('…').length>3||t.split(/\s+/).filter(w=>w.length>2&&!w.includes('…')).length<5)continue;
    return{q:E?`${h[0]}: “${t}” Where did this happen?`:`${h[0]} год: «${t}» Где это было?`,fixed:1,opts:shuffle([r,...others(r,3)]).map(x=>({t:x.n,ok:x===r})),about:r.id,ex:`${r.n}: ${h[1]}`}}return null},
- hero(){const r=qpick(R.filter(x=>x.hero)),h=r.hero;
+ hero(){const ok=x=>{if(!x.hero)return false;const st=[...new Set([x.n,x.cap,x.full||''].join(' ').split(/[^A-Za-zА-Яа-яЁё]+/).filter(w=>w.length>=4).map(w=>qn(w).slice(0,4)))];return !x.hero[0].split(/[\s\-]+/).some(w=>w.length>=4&&st.includes(qn(w).slice(0,4)))};const r=qpick(R.filter(ok)),h=r.hero;
    return{q:E?`${h[0]} — which region is this person linked to?`:`${h[0]} — с каким регионом связан этот человек?`,vis:`<div class="hint2" style="text-align:center">${esc(qmask(h[1],r))}</div>`,fixed:1,opts:shuffle([r,...others(r,3)]).map(x=>({t:x.n,ok:x===r})),about:r.id,ex:`${h[0]} — ${r.n}`}},
  capPhoto(){if(typeof CAP_IMG==='undefined')return null;const pool=R.filter(x=>CAP_IMG[x.id]);if(pool.length<4)return null;const r=qpick(pool),im=CAP_IMG[r.id];
    return{q:E?'Which city is this?':'Какой это город?',vis:`<div class="gphoto"><img alt="" src="${im.src}"></div>`,fixed:1,opts:shuffle([r,...shuffle(nearest(r,6,x=>CAP_IMG[x.id])).slice(0,3)]).map(x=>({t:x.cap,ok:x===r})),about:r.id,ex:`${r.cap} — ${r.n}${im.cr&&im.cr.a?' ('+(E?'photo: ':'фото: ')+im.cr.a+')':''}`}}
@@ -2731,16 +2732,26 @@ function makeQuiz(){const qs=[],used=new Set();const add=q=>{if(!q||used.has(q.a
   for(const t of ['near','photo'])for(let k=0;k<20&&!add(QZ[t]());k++);
   for(const t of shuffle(['flagNb','city','year','hero','capPhoto'])){if(qs.length>=QZN)break;for(let k=0;k<20;k++){const q=QZ[t]();if(!q)break;if(add(q))break}}
   return qs.slice(0,QZN)}
-function quizHub(){hubOpen=true;G.hidden=false;closeCard();game=null;const best=store.get('ruQuizCards',0),games=store.get('ruQuizGames',0);
+function quizHub(){hubOpen=true;G.hidden=false;closeCard();game=null;const best=store.get(QK('ruQuizCards'),0),games=store.get(QK('ruQuizGames'),0);
   G.innerHTML=`<div class="top"><b>${E?'Quiz':'Квиз'}</b><button class="pill" id="gx" style="margin-left:auto">${E?'To the map':'К карте'}</button></div>${whoBar()}
   <h2 style="margin-top:14px">${E?'How well do you know Russia?':'Насколько хорошо ты знаешь Россию?'}</h2>
   <div class="hint2" style="text-align:center">${E?`A card is ${QZN} hard questions: neighbouring regions on the map, places in photos, flags, cities, history and famous people. ${QZS} seconds per answer. All ${QZN} right — the card counts toward your rank. One mistake ends the card.`:`Карточка — ${QZN} сложных вопросов: соседние регионы на карте, места по фото, флаги, города, история и знаменитые люди. На ответ ${QZS} секунд. Все ${QZN} верно — карточка засчитана в ранг. Одна ошибка — карточка заканчивается.`}</div>
-  ${qrankBox(store.get('ruQuizCards',0))}
+  ${qrankBox(store.get(QK('ruQuizCards'),0))}
   <div class="today"><div><b>${best}</b><small>${E?'cards passed':'пройдено'}</small></div><div><b>${games}</b><small>${E?'cards played':'сыграно'}</small></div><div><b>${games?Math.round(best/games*100):0}%</b><small>${E?'success rate':'успешных'}</small></div></div>
   <button class="pill main big" id="qzgo">${E?'New card':'Новая карточка'}</button>
-  <h3>${E?'Rank ladder':'Лестница рангов'}</h3><ol class="qladder">${QRANKS.map((r,i)=>`<li class="${i===qrank(store.get('ruQuizCards',0))?'on':i<qrank(store.get('ruQuizCards',0))?'got':''}"><b>${i+1}. ${E?r[2]:r[1]}</b><small>${r[0]} ${E?'cards':'карточек'}</small></li>`).join('')}</ol>
+  <h3>${E?'Rank ladder':'Лестница рангов'}</h3><ol class="qladder">${QRANKS.map((r,i)=>`<li class="${i===qrank(store.get(QK('ruQuizCards'),0))?'on':i<qrank(store.get(QK('ruQuizCards'),0))?'got':''}"><b>${i+1}. ${E?r[2]:r[1]}</b><small>${r[0]} ${E?'cards':'карточек'}</small></li>`).join('')}</ol>
+  <h3>${E?'Move to another device':'Перенос на другое устройство'}</h3>
+  <div class="xfer"><button class="pill" id="qxcopy">${E?'Copy progress':'Скопировать прогресс'}</button><button class="pill" id="qxpaste">${E?'Paste progress':'Вставить прогресс'}</button></div>
+  <div class="xbox" id="qxbox" hidden><textarea id="qxta" rows="3" spellcheck="false"></textarea><button class="pill main" id="qxload">${E?'Load':'Загрузить'}</button></div>
+  <div class="hint2" id="qxmsg">${E?'Copy the code here, send it to yourself and paste it on the other phone or computer.':'Скопируй код, перешли себе и вставь на другом телефоне или компьютере.'}</div>
   <div class="hint2" style="text-align:center">${E?'Want to learn first? Tap any region on the map to read its card.':'Хочешь сначала подучить? Нажми на любой регион на карте — откроется карточка.'}</div>`;
-  $('#gx').onclick=()=>{hubOpen=false;G.hidden=true;G.innerHTML=''};$('#qzgo').onclick=startQuiz;bindWho(hub)}
+  $('#gx').onclick=()=>{hubOpen=false;G.hidden=true;G.innerHTML=''};$('#qzgo').onclick=startQuiz;bindWho(hub);
+  const box=$('#qxbox'),ta=$('#qxta'),msg=$('#qxmsg');
+  $('#qxcopy').onclick=async()=>{const code='RQ1:'+btoa(JSON.stringify({p:who,c:store.get(QK('ruQuizCards'),0),g:store.get(QK('ruQuizGames'),0)}));box.hidden=false;$('#qxload').hidden=true;ta.value=code;ta.select();let ok=false;try{await navigator.clipboard.writeText(code);ok=true}catch(e){}msg.textContent=ok?(E?'Code copied. Send it to yourself and paste it on the other device.':'Код скопирован. Перешли его себе и вставь на другом устройстве.'):(E?'Select the code in the box and copy it by hand.':'Выдели код в поле и скопируй вручную.')};
+  $('#qxpaste').onclick=()=>{box.hidden=false;$('#qxload').hidden=false;ta.value='';ta.focus();msg.textContent=E?'Paste the code and press “Load”.':'Вставь код и нажми «Загрузить».'};
+  $('#qxload').onclick=()=>{try{const s=ta.value.trim();if(!s.startsWith('RQ1:'))throw 0;const o=JSON.parse(atob(s.slice(4)));if(o.p!=='quiz'&&o.p!=='alex')throw 0;
+      if(o.p!==who)setWho(o.p);store.set(QK('ruQuizCards'),+o.c||0);store.set(QK('ruQuizGames'),+o.g||0);prog();quizHub();toast((E?'Progress loaded: ':'Прогресс загружен: ')+(+o.c||0)+(E?' cards':' карточек'),2200)}
+    catch(e){msg.textContent=E?'The code didn\'t work. Copy all of it, starting with RQ1:':'Код не подошёл. Скопируй его целиком, начиная с RQ1:'}}}
 function startQuiz(){hubOpen=false;game={type:'quiz',qs:makeQuiz(),i:0,res:[]};showQZ()}
 function showQZ(){const g=game,q=g.qs[g.i];g.lock=false;
   G.innerHTML=`<div class="top"><b>${E?'Question':'Вопрос'} ${g.i+1} ${E?'of':'из'} ${g.qs.length}</b><span class="dots">${g.qs.map((x,i)=>`<i class="${i<g.i?(g.res[i]?'ok':'no'):i===g.i?'now':''}"></i>`).join('')}</span><button class="pill" id="gx">${E?'Stop':'Стоп'}</button></div>
@@ -2756,8 +2767,8 @@ function answerQZ(k){const g=game;if(!g||g.type!=='quiz'||g.lock)return;g.lock=t
   G.querySelectorAll('.ans').forEach((b,i)=>{if(q.opts[i].ok)b.classList.add('good');else if(i===k)b.classList.add('bad')});
   $('#gn').textContent=ok?(E?'Correct!':'Верно!'):(k<0?(E?'Time\'s up! ':'Время вышло! '):'')+q.ex;
   if(!ok){g.qs=g.qs.slice(0,g.res.length)}setTimeout(()=>{g.i++;if(ok&&g.i<g.qs.length)showQZ();else endQZ()},ok?900:2600)}
-function endQZ(){const g=game,n=g.res.filter(Boolean).length,ok=n===QZN&&g.res.length===QZN;store.set('ruQuizGames',store.get('ruQuizGames',0)+1);
-  const c0=store.get('ruQuizCards',0),c1=c0+(ok?1:0);store.set('ruQuizCards',c1);const up=qrank(c1)>qrank(c0);prog();if(up)setTimeout(()=>toast((E?'New rank: ':'Новый ранг: ')+qrn(qrank(c1))+'!',2600),300);
+function endQZ(){const g=game,n=g.res.filter(Boolean).length,ok=n===QZN&&g.res.length===QZN;store.set(QK('ruQuizGames'),store.get(QK('ruQuizGames'),0)+1);
+  const c0=store.get(QK('ruQuizCards'),0),c1=c0+(ok?1:0);store.set(QK('ruQuizCards'),c1);const up=qrank(c1)>qrank(c0);prog();if(up)setTimeout(()=>toast((E?'New rank: ':'Новый ранг: ')+qrn(qrank(c1))+'!',2600),300);
   G.innerHTML=`<div class="top"><b>${E?'Card finished':'Карточка закончена'}</b></div><div class="verdict ${ok?'win':''}">${ok?(E?'Card passed!':'Карточка пройдена!'):(E?'Not this time':'Не в этот раз')}</div>
    <div class="next" style="text-align:center">${ok?(E?`All ${QZN} right · +1 card to your rank`:`Все ${QZN} верно · +1 карточка в ранг`):(E?`Mistake on question ${g.res.length} of ${QZN} — the card stopped`:`Ошибка на ${g.res.length}-м вопросе из ${QZN} — карточка остановлена`)}</div>
    ${up?`<div class="rankup"><small>${E?'New rank!':'Новый ранг!'}</small><b>${qrn(qrank(c1))}</b></div>`:''}${qrankBox(c1)}
