@@ -1239,7 +1239,7 @@ KEM:[["тысячи лет назад","Древние люди нарисова
 NVS:[["1893","Начали строить мост через Обь для Транссиба. Так родился посёлок — будущий Новосибирск."],["1926","Город назвали Новосибирск."],["1945","Открыли Театр оперы и балета — самый большой в России."],["1957","Построили Академгородок — город учёных."]],
 OMS:[["1594","Основана Тара — старейший город области."],["1716","Основана Омская крепость."],["1850–1854","Фёдор Достоевский отбывал в Омске каторгу."],["1918–1919","Омск был столицей белого правительства адмирала Колчака."]],
 TOM:[["1604","По указу Бориса Годунова основан Томск."],["1888","Открыли первый в Сибири университет."],["XIX век","В Томске построили много деревянных домов с резьбой. Их называют «деревянным кружевом»."],["1944","Образована Томская область."]],
-TY:[["≈ 2,8 тыс. лет назад","Построили курган Аржан — одно из древнейших царских захоронений скифов."],["VIII век","На острове посреди озера построили крепость Пор-Бажын."],["1921–1944","Тува была отдельной страной — Тувинской народной республикой."],["1944","Тува вошла в состав нашей страны."]],
+TY:[["≈ 2,8 тыс. лет назад","Построили курган Аржан — одно из древнейших царских захоронений скифов."],["VIII век","На острове посреди озера построили крепость Пор-Бажын."],["1921–1944","Тыва была отдельной страной — Тувинской народной республикой."],["1944","Тыва вошла в состав нашей страны."]],
 KK:[["≈ 2,5 тыс. лет назад","Насыпали огромный Салбыкский курган — его называют «сибирскими пирамидами»."],["IX век","Здесь было сильное государство енисейских кыргызов."],["1707","Построили Абаканский острог."],["1978","Заработала Саяно-Шушенская ГЭС — самая мощная в России."]],
 BU:[["1666","Основан Удинский острог — будущий Улан-Удэ."],["1727","Основана Кяхта. Через неё в Россию везли чай из Китая."],["1741","По преданию, в этом году буддизм в России признали официально."],["1934","Верхнеудинск переименовали в Улан-Удэ — «Красная Уда»."]],
 ZAB:[["1653","Казаки поставили острожки на месте будущих Читы и Нерчинска."],["1689","Подписали Нерчинский договор — первый договор России с Китаем."],["1827–1830","В Читинском остроге держали декабристов."],["1851","Образована Забайкальская область."]],
@@ -2107,7 +2107,7 @@ const mix=(a,b,t)=>`color-mix(in oklab, ${b} ${Math.round(t*100)}%, ${a})`;
 const lg=(x,a,b)=>Math.max(0,Math.min(1,(Math.log(x)-Math.log(a))/(Math.log(b)-Math.log(a))));
 const tzHue=t=>(t+1)*32+190;
 const MODES={
- seen:{name:'Изученные',fill:r=>visited.has(r.id)?'var(--good)':'var(--land)',legend:()=>(who==='quiz'||who==='alex')?`<b>${E?'Quiz mode':'Режим квиза'}</b><div class="hint">${E?'Tap any region to read about it. Press “Play” for the quiz.':'Нажми на любой регион, чтобы почитать о нём. Квиз — кнопка «Играть».'}</div>`:`<b>Изучено ${visited.size} из ${R.length}</b><div class="cats"><span><i style="background:var(--good)"></i>изучено</span><span><i style="background:var(--land);box-shadow:inset 0 0 0 1px var(--soft)"></i>ещё не изучено</span></div><div class="hint">Выбери на карте серый регион, прочитай карточку и сдай экзамен</div>`},
+ seen:{name:'Изученные',fill:r=>visited.has(r.id)?'var(--good)':'var(--land)',legend:()=>(who==='quiz'||who==='alex')?`<b>${E?'Read':'Прочитано'} ${visited.size} ${E?'of':'из'} ${R.length}</b><div class="cats"><span><i style="background:var(--good)"></i>${E?'read':'прочитано'}</span><span><i style="background:var(--land);box-shadow:inset 0 0 0 1px var(--soft)"></i>${E?'not yet':'ещё нет'}</span></div><div class="hint">${E?'Tap a region, read its card and press “I have read”. The quiz is under “Play”.':'Нажми на регион, прочитай карточку и нажми «Прочитал». Квиз — кнопка «Играть».'}</div>`:`<b>Изучено ${visited.size} из ${R.length}</b><div class="cats"><span><i style="background:var(--good)"></i>изучено</span><span><i style="background:var(--land);box-shadow:inset 0 0 0 1px var(--soft)"></i>ещё не изучено</span></div><div class="hint">Выбери на карте серый регион, прочитай карточку и сдай экзамен</div>`},
  fd:{name:'Округа',fill:r=>`var(--fd${FD[r.fd][1]})`,legend:()=>`<b>Федеральные округа</b><div class="cats">${Object.entries(FD).map(([k,v])=>`<span><i style="background:var(--fd${v[1]})"></i>${v[0]}</span>`).join('')}</div>`},
  pop:{name:'Сколько людей',fill:r=>mix('var(--lo)','var(--hi)',lg(r.pop,40000,13300000)),legend:()=>`<b>Сколько людей живёт</b><div class="ramp" style="background:linear-gradient(90deg,var(--lo),var(--hi))"></div><div class="ends"><span>40 тыс.</span><span>1 млн</span><span>13 млн</span></div>`},
  dens:{name:'Плотность',fill:r=>mix('var(--lo)','var(--hi)',lg(r.dens,0.05,5200)),legend:()=>`<b>Людей на 1 км²</b><div class="ramp" style="background:linear-gradient(90deg,var(--lo),var(--hi))"></div><div class="ends"><span>0,05</span><span>15</span><span>5000</span></div><div class="hint">Чем темнее, тем теснее</div>`},
@@ -2318,14 +2318,15 @@ function openRegion(id,zoom=true){
   if(V.w&&!E)h+=`<h3>Как тут говорят</h3><div class="say">${esc(V.w)}</div>`;
   h+=`<h3>Интересные факты</h3><ol class="facts">${r.facts.map((f,i)=>`<li data-n="${i+1}">${esc(f)}</li>`).join('')}</ol>`;
   h=secify(h);
-  h+=`<button class="donebtn ${done?'is':''}" id="cdone"${(who==='quiz'||who==='alex')?' style="display:none"':''} aria-pressed="${done}"></button><div class="cnav"><button class="pill" id="czoom">Показать на карте</button></div>`;
+  h+=`<button class="donebtn ${done?'is':''}" id="cdone" aria-pressed="${done}"></button><div class="cnav"><button class="pill" id="czoom">Показать на карте</button></div>`;
   if(id!==HOME&&who==='guest')h+=`<button class="pill homebtn" id="chome">🏠 Сделать моим домом</button>`;
   $('#cbody').innerHTML=h;$('#cbody').scrollTop=0;$('#cbody').querySelectorAll('.capph img').forEach(im=>{im.onclick=()=>lightbox(im.src,esc(r.cap)+' '+im.parentNode.querySelector('figcaption').innerHTML)});$('#cbody').querySelectorAll('.sight.ph img').forEach(im=>{im.onclick=()=>lightbox(im.src,im.parentNode.querySelector('figcaption').innerHTML);im.onerror=()=>{const f=im.parentNode;f.classList.remove('ph');const sm=f.querySelector('figcaption small');sm&&sm.remove();im.outerHTML=sceneSVG(f.dataset.t,{id,seed:+f.dataset.seed,cold:!!f.dataset.cold})}});
   $('#card').classList.add('on');$('#scrim').classList.toggle('on',isMobile());
   $('#cclose').onclick=closeCard;{const hb=$('#chome');if(hb)hb.onclick=()=>{store.set('ruHome_guest',id);toast('Теперь твой дом — '+r.n+'. Всё сравнивается с ним.',1800);setTimeout(()=>location.reload(),900)}}$('#czoom').onclick=()=>{if(isMobile())closeCard();focusRegion(id)};
-  const db=$('#cdone');const setBtn=d=>{db.classList.toggle('is',d);db.setAttribute('aria-pressed',d);db.innerHTML=d?'<span>✓ Изучено — экзамен сдан</span><small>нажми, чтобы снять отметку</small>':'<span>Я изучил этот регион</span><small>поставь отметку, когда всё прочитаешь</small>'};setBtn(done);
+  const db=$('#cdone');if(who==='quiz'||who==='alex'){const sb=d=>{db.classList.toggle('is',d);db.setAttribute('aria-pressed',d);db.innerHTML=d?(E?'<span>✓ Read</span><small>tap to remove the mark</small>':'<span>✓ Прочитано</span><small>нажми, чтобы снять отметку</small>'):(E?'<span>I have read this region</span><small>the region will be coloured on the map</small>':'<span>Прочитал</span><small>регион закрасится на карте</small>')};sb(done);
+    db.onclick=()=>{if(visited.has(id)){unmarkStudied(id);sb(false);$('#stamp').classList.remove('pop','still')}else{markStudied(id);sb(true);const st=$('#stamp');st.classList.remove('still');void st.offsetWidth;st.classList.add('pop')}}}else{  const db=$('#cdone');const setBtn=d=>{db.classList.toggle('is',d);db.setAttribute('aria-pressed',d);db.innerHTML=d?'<span>✓ Изучено — экзамен сдан</span><small>нажми, чтобы снять отметку</small>':'<span>Я изучил этот регион</span><small>поставь отметку, когда всё прочитаешь</small>'};setBtn(done);
   if(!done)db.innerHTML='<span>Я изучил этот регион</span><small>ответь на 3 вопроса про него без единой ошибки</small>';
-  db.onclick=()=>{if(visited.has(id)){unmarkStudied(id);setBtn(false);db.innerHTML='<span>Я изучил этот регион</span><small>ответь на 3 вопроса про него без единой ошибки</small>';$('#stamp').classList.remove('pop','still');return}startExam(id)};
+  db.onclick=()=>{if(visited.has(id)){unmarkStudied(id);setBtn(false);db.innerHTML='<span>Я изучил этот регион</span><small>ответь на 3 вопроса про него без единой ошибки</small>';$('#stamp').classList.remove('pop','still');return}startExam(id)};}
   if(window.__justStudied===id){window.__justStudied=null;const st=$('#stamp');st.classList.remove('still');void st.offsetWidth;st.classList.add('pop')}
   if(zoom)setTimeout(()=>focusRegion(id),isMobile()?0:320);
 }
@@ -2439,7 +2440,7 @@ const studyLog=()=>store.get(LOGK(),{});
 const newToday=()=>Object.values(studyLog()).filter(d=>d===today()).length;
 const needToday=()=>{const rem=R.length-visited.size,n=newToday();return Math.max(0,Math.min(DAILY_NEW,n+rem)-n)};
 function markStudied(id){const before=sealsDone().length;visited.add(id);store.set('ruRegionsDone_'+who,[...visited]);const L=studyLog();L[id]=today();store.set(LOGK(),L);prog();if(mode==='seen')paint();
-  const after=sealsDone();if(after.length>before){const k=after.find(x=>R.filter(r=>r.fd===x).some(r=>r.id===id));setTimeout(()=>toast('Печать округа '+k+'!'+(who==='guest'?'':' +'+SEAL_PAY+' ₽'),3000),400)}
+  const after=sealsDone();if(after.length>before){const k=after.find(x=>R.filter(r=>r.fd===x).some(r=>r.id===id));setTimeout(()=>toast('Печать округа '+k+'!'+(who==='guest'||who==='quiz'||who==='alex'?'':' +'+SEAL_PAY+' ₽'),3000),400)}
   else toast(visited.size===R.length?'Ура! Изучены все '+R.length+' регионов!':'Регион изучен! Всего '+visited.size+' из '+R.length,1800)}
 function unmarkStudied(id){visited.delete(id);store.set('ruRegionsDone_'+who,[...visited]);const L=studyLog();delete L[id];store.set(LOGK(),L);prog();if(mode==='seen')paint()}
 
@@ -2714,7 +2715,11 @@ const nearest=(r,n,f=()=>true)=>R.filter(x=>x!==r&&f(x)).map(x=>[x,QDIST(x.id,r.
 const nearOpts=r=>shuffle([r,...shuffle(nearest(r,5)).slice(0,3)]);
 const stemsOf=r=>[r.n,r.cap,r.full||''].join(' ').split(/[^A-Za-zА-Яа-яЁё]+/).filter(w=>w.length>=5).map(w=>w.slice(0,5).toLowerCase());
 const qn=s=>s.toLowerCase().replace(/ё/g,'е').replace(/^[«“"(]+/,'');
-const qmask=(t,r)=>{const st=[...new Set([r.n,r.cap,r.full||''].join(' ').split(/[^A-Za-zА-Яа-яЁё]+/).filter(w=>w.length>=4).map(w=>qn(w).slice(0,3)))];return t.split(/(\s+)/).map((w,i)=>{const c=w.replace(/^[«“"(]+/,'');return /^[A-ZА-ЯЁ]/.test(c)&&st.some(s=>qn(w).startsWith(s))?'…':w}).join('')};
+const QGEN=['обла','край','респ','авто','окру','горо','феде','знач','obla','krai','repu','auto','okru','city','fede'];
+const QETH={CE:['чече'],TY:['тува','туви','тыви'],CHU:['чукч'],NEN:['ненц'],YAN:['ненц','ямал'],KHM:['югор','хант','манс'],SA:['саха'],MO:['мокш','эрзя'],KC:['абаз','ного','черк'],AD:['черк'],DA:['авар','лезг','дарг','куму'],KB:['кабар','балк'],BU:['буря'],KAM:['коря','итель'],MUR:['саам','sami'],KR:['вепс'],YEV:['евре','jewi'],UD:['вотя','вотс'],KO:['зыря']};
+const qmask=(t,r)=>{const ws=[r.n,r.cap,r.full||''].join(' ').split(/[^A-Za-zА-Яа-яЁё]+/).filter(w=>w.length>=4);const st=[...new Set(ws.map(w=>qn(w).slice(0,3)))];
+  const st4=[...new Set([...ws.map(w=>qn(w).slice(0,4)).filter(s=>!QGEN.includes(s)),...(QETH[r.id]||[])])];
+  const hit=c=>{const l=qn(c);return (/^[A-ZА-ЯЁ]/.test(c)&&st.some(s=>l.startsWith(s)))||st4.some(s=>l.startsWith(s))};return t.split(/(\s+)/).map(w=>{const c=w.replace(/^[«“"(]+/,'');if(hit(c))return '…';const ps=c.split('-');return ps.length>1&&ps.some(hit)?ps.map(x=>hit(x)?'…':x).join('-'):w}).join('')};
 const QZ={
  near(){const r=qpick(R.filter(NOTINY));return find4(r,nearest(r,3,NOTINY))},
  photo(){const W0=weighted;weighted=pool=>pool.length?qpick(pool):null;try{return QT.photo()}finally{weighted=W0}},
@@ -2728,6 +2733,7 @@ const QZ={
  capPhoto(){if(typeof CAP_IMG==='undefined')return null;const pool=R.filter(x=>CAP_IMG[x.id]);if(pool.length<4)return null;const r=qpick(pool),im=CAP_IMG[r.id];
    return{q:E?'Which city is this?':'Какой это город?',vis:`<div class="gphoto"><img alt="" src="${im.src}"></div>`,fixed:1,opts:shuffle([r,...shuffle(nearest(r,6,x=>CAP_IMG[x.id])).slice(0,3)]).map(x=>({t:x.cap,ok:x===r})),about:r.id,ex:`${r.cap} — ${r.n}${im.cr&&im.cr.a?' ('+(E?'photo: ':'фото: ')+im.cr.a+')':''}`}}
 };
+if(window.__RU_TEST)window.__qm=()=>R.map(r=>[r.id,r.hero?qmask(r.hero[1],r):'',...(r.hist||[]).map(h=>qmask(h[1],r))]);
 function makeQuiz(){const qs=[],used=new Set();const add=q=>{if(!q||used.has(q.about))return false;if(!q.fixed)q.opts=shuffle(q.opts);used.add(q.about);qs.push(q);return true};
   for(const t of ['near','photo'])for(let k=0;k<20&&!add(QZ[t]());k++);
   for(const t of shuffle(['flagNb','city','year','hero','capPhoto'])){if(qs.length>=QZN)break;for(let k=0;k<20;k++){const q=QZ[t]();if(!q)break;if(add(q))break}}
